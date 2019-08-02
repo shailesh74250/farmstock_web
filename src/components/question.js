@@ -2,7 +2,7 @@ import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import {Button, Card, CardImg, CardText, CardBody,
-    CardTitle,CardFooter, CardHeader, FormFeedback,  Form, FormGroup, Input} from 'reactstrap';
+    CardTitle,CardFooter, CardHeader, FormFeedback, Label, Form, FormGroup, Input} from 'reactstrap';
 import Chip from '@material-ui/core/Chip';
 import Grid from '@material-ui/core/Grid';
 import axios from 'axios';
@@ -20,9 +20,11 @@ class QuestionComponent extends React.Component {
         this.state = {
             curquestion:{},
             answer:null,
-            image:null,
+            image: "abc.png",
             message:null,
             color: null,
+            imagelabel:null,
+            // imagename:'abc.png',
             data:{
                 "results":[
                     {
@@ -241,8 +243,23 @@ class QuestionComponent extends React.Component {
             },
         }
     }
+    componentDidMount(){
+        // if(this.state.image !== null){
+        //     // this.setState({image:'abc.png'})
+        //     this.setState({imagelabel:'Update Image'})
+        // }
+        this.state.image != null ? this.setState({imagelabel:'Update Image'}):this.setState({imagelabel:'Select Image'})
+    }
     handleFile(e) {
-        this.setState({image:e.target.files[0]})
+        // if(this.state.image !== null){
+        //     this.setState({image:'abc.png'})
+        //     this.setState({imagelabel:'Update Image'})
+        // }else{
+        //     this.setState({image:e.target.files[0]})
+        //     this.setState({imagelabel:'Update Image'})
+        // }    
+        this.setState({image:e.target.files[0]});
+        this.setState({imagelabel:'Update Image'});
     }
     handleChange(e) {
         this.setState({[e.target.name]:e.target.value})
@@ -300,10 +317,14 @@ class QuestionComponent extends React.Component {
                             <FormGroup>
                                 <Grid container spacing={3}>
                                     <Grid item sm={9}>
-                                        <Input type="textarea" name="answer" onChange={this.handleChange} required placeholder="Enter your answer" />
+                                        <Input type="textarea" value="abc" name="answer" onChange={this.handleChange} required placeholder="Enter your answer" />
                                     </Grid>
                                     <Grid item sm={3}>
-                                        <Input type="file" name="image" onChange={this.handleFile} />
+                                        {/* <input type="file"  name="image" onChange={this.handleFile} /> */}
+                                        <Input type="file" name="uploadfile" id="img" onChange={this.handleFile} style={{display:'none'}}/>
+                                        <Label for="img" style={{cursor: 'pointer', color:'blue', fontWeight:'bold'}}>{this.state.imagelabel}</Label><br/>
+                                        <Label style={{cursor: 'pointer', color:'blue', fontWeight:'bold'}}>{this.state.image}</Label>
+                                        {/* <Button color="primary">select image</Button> */}
                                     </Grid>
                                 </Grid>
                             </FormGroup>

@@ -11,10 +11,12 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import CollapseComponent from '../components/collapse';
 import ListComponent from '../components/list';
 import Question from '../components/question';
+import Suggestion from '../components/suggestion';
 
 class QuestionAnswer extends React.Component {
     constructor(props) {
         super(props)
+        
         this.state = {
             data:[],
             loading: true,
@@ -53,11 +55,9 @@ class QuestionAnswer extends React.Component {
         });
     }
     componentDidMount(){
-        
-    }
-    componentWillMount(){
         this.getData();
     }
+    
     handleDelete = () => {
         alert('You clicked the delete icon.');
     }
@@ -82,41 +82,13 @@ class QuestionAnswer extends React.Component {
                                 <Typography variant="h5" component="h1" gutterBottom>
                                     Question Answer Module
                                 </Typography>
-                                {/* <Form>
-                                    <FormGroup>
-                                        <Typography variant="body1" component="body1" style={{ textAlign:`left`}} gutterBottom>
-                                            Question 1
-                                        </Typography>
-                                    </FormGroup>
-                                    <FormGroup>
-                                        <Chip
-                                            label="Tag1"
-                                            onDelete={this.handleDelete}
-                                            className={classes.chip}
-                                            color="primary"
-                                        />
-                                        <Chip
-                                            label="Tag2"
-                                            onDelete={this.handleDelete}
-                                            className={classes.chip}
-                                            color="primary"
-                                        />
-                                    </FormGroup>   
-                                    <FormGroup>
-                                        <Input type="textarea" name="answer" id="answer" placeholder="Enter your answer" />
-                                    </FormGroup>
-                                    <Button>Submit</Button>
-                                </Form> */}
                                 <Question />
                             </Paper>
                             <Paper className={classes.paper}>
                                 <Typography variant="h5" component="h1" gutterBottom>
                                     Suggested Answers
                                 </Typography>
-                                <CollapseComponent />
-                                {/* <CollapseComponent />
-                                <CollapseComponent />
-                                <CollapseComponent /> */}
+                                <Suggestion />
                             </Paper>
                         </Grid>
                         <Grid item sm={4}>
