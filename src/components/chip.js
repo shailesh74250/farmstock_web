@@ -7,8 +7,11 @@ class ChipComponent extends React.Component {
         super(props)
         this.handleClick = this.handleClick.bind(this);
         this.state = {
-            tags : ['gehu','bajara','kapas'],
+            tags : [],
         }
+    }
+    componentDidMount(){
+        this.setState({tags:[...this.props.label.selected_crops, ...this.props.label.selected_topics]})
     }
     handleClick(e) {
         alert('clicked called')
@@ -19,15 +22,17 @@ class ChipComponent extends React.Component {
     }
     render(){
         const classes = this.props.classes;
+        
         return (
             <div>
+                {/* {this.props.label.selected_crops.map(d =>
                 <Chip
-                    label={this.props.label}
+                    label={d}
                     onClick={this.handleClick}
                     onDelete={this.handleDelete}
                     className={classes.chip}
                     color="primary"
-                />
+                />)} */}
             </div>
         );
     }

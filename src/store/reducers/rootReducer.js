@@ -2,6 +2,10 @@
 const initState = {
     storedata : [],
     current_question: {}, 
+    tags:{
+        selected_crops:"गेहूँ cvc",
+        selected_topics:"डेरी फार्मिंग asd"
+    }
 }
   
 const rootReducer = (state = initState, action) => {
@@ -27,7 +31,14 @@ const rootReducer = (state = initState, action) => {
             current_question: action.data
         }
     }
-    //console.log(state);
+    else if(action.type === 'UPDATE_CROPSTOPICS'){
+        console.log(action);
+        return {
+            ...state,
+            tags: action.data
+        }
+    }
+    console.log(state);
     return state;
 }
 export default rootReducer

@@ -8,49 +8,91 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Grid from '@material-ui/core/Grid';
 import { CardImg, Button } from 'reactstrap';
 
+import { connect } from 'react-redux';
+
 class CollapseComponent extends React.Component {
     constructor(props) {
         super(props)
         this.toggle = this.toggle.bind(this);
-        this.searchTag = this.searchTag.bind(this);
-        this.findSuggestion = this.findSuggestion.bind(this);
-        this.findTag = this.findTag.bind(this);
+        this.searchByTopics = this.searchByTopics.bind(this);
+        this.searchByCrops = this.searchByCrops.bind(this);
+        this.findSuggestionByTopics = this.findSuggestionByTopics.bind(this);
+        this.findTagByTopics = this.findTagByTopics.bind(this);
+        this.findSuggestionByCrops = this.findSuggestionByCrops.bind(this);
+        this.findTagByCrops = this.findTagByCrops.bind(this);
         // this.selectButton = this.selectButton.bind(this);
         this.state = { collapse: false,
             currenttag:'question1',
             filterdata:[],
             data:{},
-            selected_crop:"गेहूँ",
-            selected_topic:"डेरी फार्मिंग",
+            // selected_crop:"गेहूँ",
+            // selected_topic:"डेरी फार्मिंग",
+            crops:["आम","आलू","उरद","करेला","खरबूजा","गेहूँ"],
+            topics:["डेरी फार्मिंग","प्लास्टिक मल्चिंग"],
+            // crops: [],
+            // topics:[]
         };
     }
     componentDidMount(){
         this.setState({data:this.props.data});
-        console.log(this.props.data);
-        this.searchTag();
+        // console.log(this.props.tags);
+        this.searchByTopics();
+        this.searchByCrops();
+    }
+    componentWillReceiveProps (newProps) {
+        console.log(this.props.tags.selected_topics);
+        this.searchByTopics();
+        this.searchByCrops();   
     }
     toggle() {
         this.setState(state => ({ collapse: !state.collapse }));
     }
-    findTag(data){
-        return data.title === this.state.selected_topic;
+    findTagByCrops(data){
+        //return data.title === this.state.selected_topic;
+        //return this.props.tags.selected_crops.includes(data.title) ;
+        if(this.props.tags.selected_crops !== undefined){
+            return this.props.tags.selected_crops.includes(data.title) ;
+        }else{
+            return null;
+        }
     }
-    findSuggestion(data){
-        //console.log(data);
-        return data.topics.find(this.findTag);
+    findSuggestionByCrops(data){
+        return data.crops.find(this.findTagByCrops);
     }
-    searchTag() {
-        this.state.filterdata.push(this.props.data.results.find(this.findSuggestion));
+    searchByCrops() {
+        if(this.state.filterdata.indexOf(this.props.data.results.find(this.findSuggestionByCrops)) == -1){
+            this.state.filterdata.push(this.props.data.results.find(this.findSuggestionByCrops));
+        }
+    }
+
+    // search by topics
+    findTagByTopics(data){
+        if(this.props.tags.selected_topics !== undefined){
+            return this.props.tags.selected_topics.includes(data.title) ;
+        }else{
+            return null;
+        } 
+    }
+    findSuggestionByTopics(data){
+        return data.topics.find(this.findTagByTopics);
+    }
+    searchByTopics() {
+        if(this.state.filterdata.indexOf(this.props.data.results.find(this.findSuggestionByTopics)) == -1){
+            this.state.filterdata.push(this.props.data.results.find(this.findSuggestionByTopics));
+        }
+        //console.log(this.state.filterdata);
     }
     selectButton(content, image){
         alert(content);
         alert(image);
     }
     render(){
-        const classes = this.props.classes
+        const classes = this.props.classes;
+        //console.log(this.props.tags);
         return (
             <div className={classes.root}>
-            {this.state.filterdata.map(d =>
+                {this.state.filterdat !== undefined ? 'no suggested question found!':
+                this.state.filterdata.map(d =>
                 <div>
                     <ExpansionPanel> 
                         <ExpansionPanelSummary
@@ -101,4 +143,12 @@ const styles = theme => ({
         fontWeight: theme.typography.fontWeightRegular,
     },   
 });
-export default withStyles(styles)(CollapseComponent)
+
+const mapStateToProps = (state) => {
+    return {
+        tags: state.tags
+    }
+}
+
+//export default withStyles(styles)(CollapseComponent)
+export default connect(mapStateToProps, null)(withStyles(styles)(CollapseComponent))

@@ -14,6 +14,10 @@ import AddIcon from '@material-ui/icons/Add';
 import Fab from '@material-ui/core/Fab';
 import axios from 'axios';
 
+// import store
+import { connect } from 'react-redux';
+import { updateCropsTopics } from '../store/actions/postActions'; 
+
 class AddTagComponent extends React.Component {
     constructor(props) {
         super(props)
@@ -23,12 +27,13 @@ class AddTagComponent extends React.Component {
         this.handleOk = this.handleOk.bind(this);
         this.state = {
             open: false,
-            age:'',
-            crops:[],
-            topics:[],
-            selected_crops:[],
-            selected_topics:[],
-        }
+            crops:["आम","आलू","उरद","करेला","खरबूजा","गेहूँ"],
+            topics:["डेरी फार्मिंग","प्लास्टिक मल्चिंग"],
+            tags:{
+                selected_crops:[],
+                selected_topics:[]
+            }
+        } 
     }
     handleOpen(e) {
         this.setState({ ...this.state, open: true });
@@ -38,13 +43,19 @@ class AddTagComponent extends React.Component {
         this.setState({ ...this.state, open: false });
     }
     handleChange(e) {
-        this.setState({ ...this.state, [e.target.name]: [...this.state, e.target.value]})
+        if(e.target.name === 'selected_crops'){
+            //crops.push(e.target.value);
+            if(this.state.tags.selected_crops.indexOf(e.target.value) === -1){
+                this.state.tags.selected_crops.push(e.target.value)
+            }
+        }else {
+            if(this.state.tags.selected_topics.indexOf(e.target.value) === -1){
+                this.state.tags.selected_topics.push(e.target.value)
+            }
+        }
     }
     handleOk(){
-        console.log("ok")
-        console.log(this.state.selected_crops);
-        console.log(this.state.selected_topics);
-        alert(this.state.selected_crops);
+        this.props.updateCropsTopics(this.state.tags);
         this.setState({ ...this.state, open: false });
     }
     async getCropsList(){
@@ -92,6 +103,20 @@ class AddTagComponent extends React.Component {
         const crops = [
             {
                 "id": "48b65b3c-bfa6-479d-aa06-dca711af8510",
+                "title": "गेहूँ",
+                "slug": "गेहूँ",
+                "description": "",
+                "image": {
+                  "original": "https://dev.farmstock.in/media/base/crop/ANCXERaxRkWpaTnq0S5TFA.png",
+                  "thumbnail": "https://dev.farmstock.in/media/__sized__/base/crop/ANCXERaxRkWpaTnq0S5TFA-thumbnail-250x250.png"
+                },
+                "crop_type": {
+                  "name": "फल",
+                  "eng_name": "Fruits"
+                }
+            },
+            {
+                "id": "48b65b3c-bfa6-479d-aa06-dca711af8510",
                 "title": "आम",
                 "slug": "आम",
                 "description": "",
@@ -103,8 +128,8 @@ class AddTagComponent extends React.Component {
                   "name": "फल",
                   "eng_name": "Fruits"
                 }
-              },
-              {
+            },
+            {
                 "id": "e08d387a-a677-4f01-8f36-683d703c84dc",
                 "title": "आलू",
                 "slug": "आल",
@@ -117,7 +142,49 @@ class AddTagComponent extends React.Component {
                   "name": "सब्जियाँ",
                   "eng_name": "Vegetables"
                 }
-              }
+            },
+            {
+                "id": "364e8698-d19f-410e-8e01-80d31f100b2a",
+                "title": "उरद",
+                "slug": "उरद",
+                "description": "",
+                "image": {
+                    "thumbnail": "https://dev.farmstock.in/media/__sized__/base/crop/xr6Du-JBQam3uRisPS4a2A-thumbnail-250x250-70.jpg",
+                    "original": "https://dev.farmstock.in/media/base/crop/xr6Du-JBQam3uRisPS4a2A.jpg"
+                },
+                "crop_type": {
+                    "name": "दालें",
+                    "eng_name": "Pulses"
+                }
+            },
+            {
+                "id": "fdf00c93-c890-4b71-933d-56d787accb77",
+                "title": "करेला",
+                "slug": "करल",
+                "description": "",
+                "image": {
+                    "thumbnail": "https://dev.farmstock.in/media/__sized__/base/crop/nfhMPzALSdCpd5i374aU-g-thumbnail-250x250-70.jpeg",
+                    "original": "https://dev.farmstock.in/media/base/crop/nfhMPzALSdCpd5i374aU-g.jpeg"
+                },
+                "crop_type": {
+                    "name": "सब्जियाँ",
+                    "eng_name": "Vegetables"
+                }
+            },
+            {
+                "id": "866d904b-f92d-44ee-bcc2-2052a2609524",
+                "title": "खरबूजा",
+                "slug": "खरबज",
+                "description": "",
+                "image": {
+                    "thumbnail": "https://dev.farmstock.in/media/__sized__/base/crop/Q6f1KLICQi6wfPxxDt-Htg-thumbnail-250x250.png",
+                    "original": "https://dev.farmstock.in/media/base/crop/Q6f1KLICQi6wfPxxDt-Htg.png"
+                },
+                "crop_type": {
+                    "name": "फल",
+                    "eng_name": "Fruits"
+                }
+            }
         ];
         const topics = [
             {
@@ -126,8 +193,8 @@ class AddTagComponent extends React.Component {
                 "slug": "डर-फरमग",
                 "description": "",
                 "image": {
-                  "original": "https://dev.farmstock.in/media/base/topic/BkWw923CSlCkCW_nw0YzKw.jpg",
-                  "thumbnail": "https://dev.farmstock.in/media/__sized__/base/topic/BkWw923CSlCkCW_nw0YzKw-thumbnail-250x250-70.jpg"
+                    "thumbnail": "https://dev.farmstock.in/media/__sized__/base/topic/BkWw923CSlCkCW_nw0YzKw-thumbnail-250x250-70.jpg",
+                    "original": "https://dev.farmstock.in/media/base/topic/BkWw923CSlCkCW_nw0YzKw.jpg"
                 }
             },
             {
@@ -136,8 +203,38 @@ class AddTagComponent extends React.Component {
                 "slug": "पलसटक-मलचग",
                 "description": "",
                 "image": {
-                  "original": "https://dev.farmstock.in/media/base/topic/o2jaVOQnQPqzztFtSIdESg.png",
-                  "thumbnail": "https://dev.farmstock.in/media/__sized__/base/topic/o2jaVOQnQPqzztFtSIdESg-thumbnail-250x250.png"
+                    "thumbnail": "https://dev.farmstock.in/media/__sized__/base/topic/o2jaVOQnQPqzztFtSIdESg-thumbnail-250x250.png",
+                    "original": "https://dev.farmstock.in/media/base/topic/o2jaVOQnQPqzztFtSIdESg.png"
+                }
+            },
+            {
+                "id": "fb198314-8d57-4457-a920-eaf36d881ff6",
+                "title": "मछली पालन",
+                "slug": "मछल-पलन",
+                "description": "",
+                "image": {
+                    "thumbnail": "https://dev.farmstock.in/media/__sized__/base/topic/vkGtueaBRSyM2pBYCvOZbQ-thumbnail-250x250-70.jpg",
+                    "original": "https://dev.farmstock.in/media/base/topic/vkGtueaBRSyM2pBYCvOZbQ.jpg"
+                }
+            },
+            {
+                "id": "2db955e1-0298-402b-811b-6b459714d36c",
+                "title": "मल्टीलेयर खेती",
+                "slug": "मलटलयर-खत",
+                "description": "",
+                "image": {
+                    "thumbnail": "https://dev.farmstock.in/media/__sized__/base/topic/evbgzmk_QJmnF--Q4NhTSQ-thumbnail-250x250-70.jpg",
+                    "original": "https://dev.farmstock.in/media/base/topic/evbgzmk_QJmnF--Q4NhTSQ.jpg"
+                }
+            },
+            {
+                "id": "c6e48010-55be-4b0c-8343-a721cf436e24",
+                "title": "मुर्गी पालन",
+                "slug": "मरग-पलन",
+                "description": "",
+                "image": {
+                    "thumbnail": "https://dev.farmstock.in/media/__sized__/base/topic/LLtw_KD4Sn-QvuSwZ7npUQ-thumbnail-250x250-70.jpg",
+                    "original": "https://dev.farmstock.in/media/base/topic/LLtw_KD4Sn-QvuSwZ7npUQ.jpg"
                 }
             }
         ];
@@ -175,12 +272,12 @@ class AddTagComponent extends React.Component {
                         </form>
                     </DialogContent>
                     <DialogActions>
-                    <Button onClick={this.handleClose} color="primary">
-                        Cancel
-                    </Button>
-                    <Button onClick={this.handleOk} color="primary">
-                        Ok
-                    </Button>
+                        <Button onClick={this.handleClose} color="primary">
+                            Cancel
+                        </Button>
+                        <Button onClick={this.handleOk} color="primary">
+                            Ok
+                        </Button>
                     </DialogActions>
                 </Dialog>
             </React.Fragment>
@@ -198,4 +295,11 @@ const styles = theme => ({
         minWidth: 120,
     },
 });
-export default withStyles(styles)(AddTagComponent);
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        updateCropsTopics: (data) => dispatch(updateCropsTopics(data))
+    }
+}
+
+export default connect(null,mapDispatchToProps)(withStyles(styles)(AddTagComponent));

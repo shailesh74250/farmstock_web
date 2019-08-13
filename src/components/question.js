@@ -13,6 +13,8 @@ import AddTag from './addtag';
 import AnswerList from './collapse';
 import ChipComponent from './chip';
 
+
+
 class QuestionComponent extends React.Component {
     constructor(props) {
         super(props)
@@ -21,23 +23,29 @@ class QuestionComponent extends React.Component {
         this.handleClick = this.handleClick.bind(this);
         this.handleFile = this.handleFile.bind(this);
         this.addTag = this.addTag.bind(this);
+        // this.getCropsList = this.getCropsList.bind(this);
+        // this.getTopicsList = this.getTopicsList.bind(this);
         this.state = {
             answers:[] ,
             image: "abc.png",
             message:null,
             color: null,
             imagelabel:null,
+            // crops_topics : {
+            //     crops: [],
+            //     topics:[]
+            // },
             // imagename:'abc.png',
             newdata: this.props.storedata,
         }
     }
     componentDidMount(){
-        //this.state.image != null ? this.setState({imagelabel:'Update Image'}):this.setState({imagelabel:'Select Image'})
-        
+        //this.state.image != null ? this.setState({imagelabel:'Update Image'}):this.setState({imagelabel:'Select Image'})  
+        //this.getCropsList();
+        //this.getTopicsList();  
+
     }
-    
     handleFile(e) {
- 
         this.setState({image:e.target.files[0]});
         this.setState({imagelabel:'Update Image'});
     }
@@ -69,12 +77,55 @@ class QuestionComponent extends React.Component {
             this.setState({color:'red'});
         }
     }
-    
+    // async getCropsList(){
+    //     await axios.get('https://dev.farmstock.in/api/v1/crops')
+    //     .then(response => {
+    //        this.setState({...this.state, crops_topics:{...this.state.crops_topics, crops:response.data.results}}); 
+    //        //this.setState({...this.state, crops:response.data.results});
+    //        console.log(response.data.results);
+    //     })
+    //     .catch((error) => {
+    //         if (error.response) {
+    //             console.log(error.response.data);
+    //         } else if (error.request) {
+    //             console.log(error.request);
+    //         } else {
+    //             console.log('Error', error.message);
+    //         }
+    //         console.log(error.config);
+    //     });
+    // }
+    // async getTopicsList(){
+    //     await axios.get('https://dev.farmstock.in/api/v1/topics')
+    //     .then(response => {
+    //         this.setState({...this.state, crops_topics:{...this.state.crops_topics, topics:response.data.results}});
+    //         //console.log(this.state.topics);
+    //     })
+    //     .catch((error) => {
+    //         // Error
+    //         if (error.response) {
+    //         } else if (error.request) {
+    //             console.log(error.request);
+    //         } else {
+    //             // Something happened in setting up the request that triggered an Error
+    //             console.log('Error', error.message);
+    //         }
+    //         console.log(error.config);
+    //     });
+    // }
+    // shouldComponentUpdate(nextProps, nextState) {
+        
+    //     if(nextState.crops_topics != this.state.crops_topics){
+    //         console.log(this.state.crops_topics);
+    //         this.props.updateCropsTopics(this.state.crops_topics); 
+    //     }
+    // }
+
     render(){
         //console.log(this.props.current_question.replies);
         const classes = this.props.classes;
         console.log("inside question");
-        console.log(this.props.current_question.content);
+        console.log(this.props.tags);
         return (
             <React.Fragment>
                 <Card>
@@ -92,10 +143,11 @@ class QuestionComponent extends React.Component {
                         <CardTitle>
                             <Grid container spacing={3}>
                                 <Grid item sm={10} style={{textAlign:'left'}}>
-                                    <ChipComponent label="dhan ki kheti"/>
+                                    <ChipComponent label={this.props.tags}/>
                                 </Grid>
                                 <Grid item sm={2}>
-                                   <AddTag /> 
+                                   {/* <AddTag crops_list = {this.state.crops} topics_list = {this.state.topics}/>  */}
+                                    <AddTag />
                                 </Grid>
                             </Grid>
                         </CardTitle>
@@ -142,11 +194,8 @@ const styles = theme => ({
 });
 
 const mapStateToProps = (state) => {
-    //console.log('sdfs')
-    //console.log(state.cureentquestion.content);
-    // return {
-    //     currentquestion: state.cureentquestion
-    // }
+    return {
+        tags: state.tags
+    }
 }
-export default connect(mapStateToProps,null)(withStyles(styles)(QuestionComponent))
-//export default withStyles(styles)(QuestionComponent)
+export default connect(mapStateToProps, null)(withStyles(styles)(QuestionComponent))

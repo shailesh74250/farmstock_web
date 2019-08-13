@@ -67,7 +67,6 @@ class QuestionAnswer extends React.Component {
             // this.state.loading ? <CircularProgress className={classes.progress} /> :
                 this.state.loading ? <CircularProgress /> :
                 <ListComponent />
-           
         );
     }
 }
