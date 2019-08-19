@@ -65,8 +65,8 @@ class QuestionAnswer extends React.Component {
         //console.log(this.state.data.result[0]);
         return (
             // this.state.loading ? <CircularProgress className={classes.progress} /> :
-                this.state.loading ? <CircularProgress /> :
-                <ListComponent />
+                this.state.loading ? <CircularProgress style={{marginTop:'250px'}}/> :
+                <ListComponent/>
         );
     }
 }

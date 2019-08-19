@@ -2,10 +2,8 @@
 const initState = {
     storedata : [],
     current_question: {}, 
-    tags:{
-        selected_crops:"गेहूँ cvc",
-        selected_topics:"डेरी फार्मिंग asd"
-    }
+    // crops:[],
+    // topics:[]
 }
   
 const rootReducer = (state = initState, action) => {
@@ -31,13 +29,19 @@ const rootReducer = (state = initState, action) => {
             current_question: action.data
         }
     }
-    else if(action.type === 'UPDATE_CROPSTOPICS'){
-        console.log(action);
-        return {
-            ...state,
-            tags: action.data
-        }
-    }
+    // else if(action.type === 'UPDATE_CROPS'){
+    //     console.log(action);
+    //     return {
+    //         ...state,
+    //         crops: action.data
+    //     }
+    // }else if(action.type === 'UPDATE_TOPICS'){
+    //     console.log(action);
+    //     return {
+    //         ...state,
+    //         topics: action.data
+    //     }
+    // }
     console.log(state);
     return state;
 }

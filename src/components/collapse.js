@@ -34,7 +34,7 @@ class CollapseComponent extends React.Component {
         const classes = this.props.classes;
         if(this.props.answers !== undefined && (this.props.answers).length > 0){
             return (
-                <div className={classes.root}>
+                <div className={classes.root} >
                 {this.props.answers.map(d => 
                 <div>
                     <ExpansionPanel>
@@ -76,6 +76,8 @@ class CollapseComponent extends React.Component {
 const styles = theme => ({
     root: {
         width: '100%',
+        overflow: 'auto',
+        height: '300px'
     },
     heading: {
         fontSize: theme.typography.pxToRem(15),

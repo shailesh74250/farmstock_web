@@ -29,6 +29,9 @@ class ListComponent extends React.Component {
         this.state = {
             curquestion:{},
             selectedIndex : 1,
+            suggested_answers:null,
+            updated_answer:'',
+            updated_image:''
         }
         this.handleClick = this.handleClick.bind(this);
     }
@@ -52,6 +55,19 @@ class ListComponent extends React.Component {
         console.log("inside newlist")
         console.log(d);
     }
+    suggestedAnswers = (answers) => {
+        console.log(answers)
+        //let updatedanswers = [...this.state.suggested_answers, answers];
+        this.setState({
+            suggested_answers:answers
+        })
+    }
+    answerSuggestion = (content, image) => {
+        //alert(content);
+        this.setState(
+            {updated_answer:content, updated_image:image}
+        )
+    }
     render(){
         const classes = this.props.classes;
         
@@ -68,13 +84,19 @@ class ListComponent extends React.Component {
                                 <Typography variant="h5" component="h1" gutterBottom>
                                     Question Answer Module
                                 </Typography>
-                                <Question current_question = {this.state.curquestion}/>
+                                <Question 
+                                    current_question = {this.state.curquestion} 
+                                    data = {this.props.storedata}
+                                    suggestedAnswers = {this.suggestedAnswers} 
+                                    updated_answer = {this.state.updated_answer}
+                                    updated_image = {this.state.updated_image}
+                                />
                             </Paper>
                             <Paper className={classes.paper}>
                                 <Typography variant="h5" component="h1" gutterBottom>
                                     Suggested Answers
                                 </Typography>
-                                <Suggestion data = {this.props.storedata}/>
+                                <Suggestion data = {this.props.storedata} answers= {this.state.suggested_answers} answerSuggestion={this.answerSuggestion}/>
                             </Paper>
                         </Grid>
                         <Grid item sm={4}>
@@ -82,14 +104,15 @@ class ListComponent extends React.Component {
                                 <Typography variant="h5" component="h1" gutterBottom>
                                     Asked Questions
                                 </Typography>
-                                <List component="nav" aria-label="secondary mailbox folders">          
+                                <List component="nav" aria-label="secondary mailbox folders" style={{overflow: 'auto', height: '450px'}}>          
                                     {this.props.storedata.results.map(d => 
                                         <ListItem 
+                                            key={d.id}
                                             button 
                                             //selected={this.state.selectedIndex === 0}
                                             onClick={e => this.handleClick(e,d)}
                                         >
-                                            <ListItemText key={d.id} primary={d.content} />
+                                            <ListItemText primary={d.content} />
                                         </ListItem>)
                                     }            
                                 </List> 
@@ -105,6 +128,7 @@ class ListComponent extends React.Component {
 const styles = theme => ({
     root: {
         flexGrow:1,
+        // overflowX: 'hidden',
         // width: '100%',
         // maxWidth: 360,
         // backgroundColor: theme.palette.background.paper,

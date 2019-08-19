@@ -5,34 +5,32 @@ import Chip from '@material-ui/core/Chip';
 class ChipComponent extends React.Component {
     constructor(props) {
         super(props)
-        this.handleClick = this.handleClick.bind(this);
-        this.state = {
-            tags : [],
-        }
     }
     componentDidMount(){
-        this.setState({tags:[...this.props.label.selected_crops, ...this.props.label.selected_topics]})
     }
-    handleClick(e) {
-        alert('clicked called')
-        alert(e.target.label)
-    } 
-    handleDelete(){
-        alert('delete called')
-    }
+    handleDelete = chipToDelete => () => {
+        this.props.deleteTag(chipToDelete);
+    };
     render(){
         const classes = this.props.classes;
-        
+        console.log(this.props.tags);
+        const tagList = this.props.tags.length > 0 ? (
+            this.props.tags.map(record=>{
+                return(
+                    <Chip
+                        key={record}
+                        label={record}
+                        name={record}
+                        onDelete={this.handleDelete(record)}
+                        className={classes.chip}
+                        color="primary"
+                    />
+                )
+            })
+        ) : (<p>No tag selected yet</p>)
         return (
             <div>
-                {/* {this.props.label.selected_crops.map(d =>
-                <Chip
-                    label={d}
-                    onClick={this.handleClick}
-                    onDelete={this.handleDelete}
-                    className={classes.chip}
-                    color="primary"
-                />)} */}
+                {tagList}
             </div>
         );
     }
@@ -43,6 +41,9 @@ const styles = theme => ({
         width: '100%',
         maxWidth: 360,
         backgroundColor: theme.palette.background.paper,
+    },
+    chip: {
+        margin: theme.spacing(1),
     },
 });
 export default withStyles(styles)(ChipComponent)
