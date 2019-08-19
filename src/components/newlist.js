@@ -58,6 +58,7 @@ class ListComponent extends React.Component {
     suggestedAnswers = (answers) => {
         console.log(answers)
         //let updatedanswers = [...this.state.suggested_answers, answers];
+        //console.log()
         this.setState({
             suggested_answers:answers
         })
@@ -70,7 +71,6 @@ class ListComponent extends React.Component {
     }
     render(){
         const classes = this.props.classes;
-        
         return (
             <React.Fragment>
                 <CssBaseline />
@@ -93,10 +93,7 @@ class ListComponent extends React.Component {
                                 />
                             </Paper>
                             <Paper className={classes.paper}>
-                                <Typography variant="h5" component="h1" gutterBottom>
-                                    Suggested Answers
-                                </Typography>
-                                <Suggestion data = {this.props.storedata} answers= {this.state.suggested_answers} answerSuggestion={this.answerSuggestion}/>
+                                <Suggestion data = {this.props.storedata} suggestedAnswers = {this.suggestedAnswers}  answers= {this.state.suggested_answers} answerSuggestion={this.answerSuggestion}/>
                             </Paper>
                         </Grid>
                         <Grid item sm={4}>
