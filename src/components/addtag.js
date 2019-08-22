@@ -32,8 +32,8 @@ class AddTagComponent extends React.Component {
             // topics_list : [],
             // crops_list :[]
             tags_list:[],
-            crops_list:[],
-            topics_list:[]
+            // crops_list:[],
+            // topics_list:[]
         } 
     }
     handleOpen(e) {
@@ -47,10 +47,10 @@ class AddTagComponent extends React.Component {
         //alert(e.target.value);
         if(e.target.value === 'Topics'){
             //this.getTopics();
-            this.setState({tags_list:this.state.topics_list})
+            this.setState({tags_list:this.props.topics_list})
         }else if(e.target.value === 'Crops'){
             //this.getCrops();
-            this.setState({tags_list:this.state.crops_list})
+            this.setState({tags_list:this.props.crops_list})
         }
         //console.log(e.currenttarget.key)
         this.setState({
@@ -58,47 +58,11 @@ class AddTagComponent extends React.Component {
         })
     }
     handleOk(){
-        this.props.getTag(this.state.selected_tag, this.state.crops_list, this.state.topics_list);
+        this.props.getTag(this.state.selected_tag);
         this.setState({ ...this.state, open: false });
     }
-
-    async getTopics(){
-        await axios.get('https://dev.farmstock.in/api/v1/topics')
-        .then(response => {
-            this.setState({topics_list:response.data.results});
-        })
-        .catch((error) => {
-            // Error
-            if (error.response) {
-                console.log(error.response.data);
-            } else if (error.request) {
-                console.log(error.request);
-            } else {
-                console.log('Error', error.message);
-            }
-            console.log(error.config);
-        });
-    }
-    async getCrops(){
-        await axios.get('https://dev.farmstock.in/api/v1/crops')
-        .then(response => {
-            this.setState({crops_list:response.data.results});
-        })
-        .catch((error) => {
-            // Error
-            if (error.response) {
-                console.log(error.response.data);
-            } else if (error.request) {
-                console.log(error.request);
-            } else {
-                console.log('Error', error.message);
-            }
-            console.log(error.config);
-        });
-    }
     componentDidMount(){
-        this.getTopics();
-        this.getCrops();
+       
     }
     render(){
         const classes = this.props.classes;

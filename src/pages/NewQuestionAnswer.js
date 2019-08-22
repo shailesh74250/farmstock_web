@@ -21,7 +21,7 @@ class QuestionAnswer extends React.Component {
         }
     }
     async getData(){
-        await axios.get('https://dev.farmstock.in/api/v1/posts')
+        await axios.get('http://127.0.0.1:8000/api/v1/posts')
         .then(response => {
             //this.setState({data:response.data});
             this.props.updateStore(response.data);

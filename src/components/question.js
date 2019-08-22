@@ -12,6 +12,7 @@ import { connect } from 'react-redux';
 import AddTag from './addtag';
 import AnswerList from './collapse';
 import ChipComponent from './chip';
+import Suggestion from './suggestion';
 
 class QuestionComponent extends React.Component {
     constructor(props) {
@@ -21,82 +22,122 @@ class QuestionComponent extends React.Component {
         this.onFormSubmit = this.onFormSubmit.bind(this);
         this.handleFile = this.handleFile.bind(this);
         this.getSuggestedAnswers = this.getSuggestedAnswers.bind(this);
+        this.postSuggestedAnswers = this.postSuggestedAnswers.bind(this);
         this.addTag = this.addTag.bind(this);
         this.deleteTag = this.deleteTag.bind(this);
         // this.componentWillReceiveProps = this.componentWillReceiveProps.bind(this);
         this.state = {
-            image: null,
-            answer:null,
+            image: '',
+            answer:'',
             color: null,
             imagelabel:null,
             newdata: this.props.storedata,
             tag:[],
+            updated_answer:'',
+            updated_image:'',
+            suggested_answers:[],
+            crops_list:[],
+            topics_list:[],
         }
         this.tags_with_id = [];
         this.crop_topic_url = '';
     }
     componentDidMount(){
-        console.log("question did mount")
+        this.getTopics();
+        this.getCrops();
         //this.state.image != null ? this.setState({imagelabel:'Update Image'}):this.setState({imagelabel:'Select Image'})  
     }
-    // componentWillReceiveProps(nextProps) {
-    //     console.log(this.props.answer_by);
-    //     // You don't have to do this check first, but it can help prevent an unneeded render
-    //     if (this.props.answer_by !== this.state.answer) {
-    //         console.log(this.props.answer_by);
-    //         this.setState({ answer: this.props.answer_by });
-    //     }
-    //   }
+   
     handleFile(e) {
         this.setState({image:e.target.files[0]});
-        this.setState({imagelabel:'Update Image'});
+        //this.setState({imagelabel:'Update Image'});
     }
     handleChange(e) {
+        //alert(e.target.value);
         this.setState({[e.target.name]:e.target.value})
+
+        //let updatedtag = [...this.state.updated_answer, e.target.value];
+        this.setState({
+            updated_answer:e.target.value
+        });
     }
     addTag(){
         alert('this is alert')
     }
-    async onFormSubmit(e) {
-        console.log(this.state.image)
-        e.preventDefault();
-        const formData = new FormData();
-        formData.append('image',this.state.file);
-        formData.append('content', this.state.content)
-        const config = {
-            headers: {
-                Authorization: 'Token b05a75d45b58c1637ea312212bd27f43d1bc1f1b',
-                'content-type': 'multipart/form-data',
+    async getTopics(){
+        await axios.get('http://127.0.0.1:8000/api/v1/topics')
+        .then(response => {
+            this.setState({topics_list:response.data.results});
+        })
+        .catch((error) => {
+            // Error
+            if (error.response) {
+                console.log(error.response.data);
+            } else if (error.request) {
+                console.log(error.request);
+            } else {
+                console.log('Error', error.message);
             }
-        };
-        axios.post("https://dev.farmstock.in/api/v1/posts/9c78ec5c-6217-41f0-a2b0-dce0677a139d/post_replies",formData,config)
-            .then((response) => {
-                this.setState({message:'Answer posted successfully!'});
-                this.setState({color:'green'});
-                alert("The file is successfully uploaded");
-            }).catch((error) => {
-                this.setState({message:'Answer posted failed'});
-                this.setState({color:'red'});
+            console.log(error.config);
         });
+    }
+    async getCrops(){
+        await axios.get('http://127.0.0.1:8000/api/v1/crops')
+        .then(response => {
+            this.setState({crops_list:response.data.results});
+        })
+        .catch((error) => {
+            // Error
+            if (error.response) {
+                console.log(error.response.data);
+            } else if (error.request) {
+                console.log(error.request);
+            } else {
+                console.log('Error', error.message);
+            }
+            console.log(error.config);
+        });
+    }
+    async onFormSubmit(e) {
+        console.log(this.props.current_question.id)
+        e.preventDefault();
 
-        // let formData = new FormData()  
-        // formData.set('image', this.state.image);
-        // formData.set('content', this.state.answer);
-        // try {
-        //     const response = await axios.post('https://dev.farmstock.in/api/v1/posts/9c78ec5c-6217-41f0-a2b0-dce0677a139d/post_replies',
-        //     formData, {
-        //         headers: {
-        //           Authorization: 'Token b05a75d45b58c1637ea312212bd27f43d1bc1f1b','content-type': 'multipart/form-data'
-        //         }
-        //     });
-        //     console.log('👉 Returned data:', response);
-        //     this.setState({message:'Answer posted successfully!'});
-        //     this.setState({color:'green'});
-        // } catch (e) {
-        //     console.log(`😱 Axios request failed: ${e}`);
-        //     this.setState({message:'Answer posted failed'});
-        //     this.setState({color:'red'});
-        // }
+        let formData = new FormData()  
+        if(this.state.updated_answer !== '' && this.state.updated_image !== '' && this.state.image === ''){
+            alert('editable');
+            var filename = this.state.updated_image.replace(/^.*[\\\/]/, '');
+            let file = await fetch(this.state.updated_image)
+            .then(r => r.blob())
+            .then(blobFile => new File([blobFile], filename, { type: ["image/png","image/jpg","image/jpeg"]}))
+            formData.set('content', this.state.updated_answer);
+            formData.set('image', file);
+        }else{
+            console.log(this.state.image)
+            let file = this.state.image;
+            formData.set('content', this.state.answer);
+            formData.set('image', file);
+        }
+        try {
+            const response =  await axios.post('http://127.0.0.1:8000/api/v1/posts/'+this.props.current_question.id+'/post_replies',
+            formData, {
+                headers: {
+                  Authorization: 'Token ec5e8a7ac4555bacd704a8f9a5c66784eac11060','content-type': 'multipart/form-data'
+                }
+            });
+            console.log('👉 Returned data:', response);
+            this.setState({message:'Answer posted successfully!'});
+            this.setState({color:'green'});
+            this.setState({image:''});
+            this.setState({updated_answer:''});
+            this.setState({updated_image:''});
+        } catch (e) {
+            console.log(`😱 Axios request failed: ${e}`);
+            this.setState({message:'Answer posted failed'});
+            this.setState({color:'red'});
+            this.setState({image:''});
+            this.setState({updated_answer:''});
+            this.setState({updated_image:''});
+        }
     }
     async getSuggestedAnswers(data){
         // https://dev.farmstock.in/api/v1/tags?crops={id1}&crops={id2}....crops={idn}&topics={id1} &topics={id2}.
@@ -111,11 +152,13 @@ class QuestionComponent extends React.Component {
         });
         console.log(crop_topic_url);
         if(crop_topic_url !== ''){
-            await axios.get('https://dev.farmstock.in/api/v1/posts/tag?'+crop_topic_url)
+            await axios.get('http://127.0.0.1:8000/api/v1/posts/tag?'+crop_topic_url)
             .then(response => {
                 //console.log(response.data.results);
+                this.postSuggestedAnswers(crop_topic_url);
                 crop_topic_url = '';
-                this.props.suggestedAnswers(response.data.results);
+                //this.props.suggestedAnswers(response.data.results);
+                this.suggestedAnswers(response.data.results);
             })
             .catch((error) => {
                 crop_topic_url = '';
@@ -131,24 +174,48 @@ class QuestionComponent extends React.Component {
             });
         }else{
             crop_topic_url = '';
-            this.props.suggestedAnswers('');
+            this.suggestedAnswers('');
         } 
     }
-    getTag = (item, crops_list, topics_list) => {
+    async postSuggestedAnswers(crop_topic_url){
+        console.log(this.props.current_question.id);
+        try {
+            const response =  axios.post('http://127.0.0.1:8000/api/v1/posts/'+this.props.current_question.id+'/tag/update?'+crop_topic_url,
+            {
+                headers: {
+                  Authorization: 'Token ec5e8a7ac4555bacd704a8f9a5c66784eac11060','content-type': 'application/json'
+                }
+            });
+            console.log('👉 Returned data:', response);
+            alert("tag added successfully");
+           // this.setState({message:'Answer posted successfully!'});
+           // this.setState({color:'green'});
+        } catch (e) {
+            console.log(`😱 Axios request failed: ${e}`);
+            alert("tag not added");
+            // this.setState({message:'Answer posted failed'});
+            // this.setState({color:'red'});
+        }
+    }
+    getTag = (item) => {
         
         // check wheather selected tag already present in list if yes then it goes to elese block
         if(!this.state.tag.includes(item)){
             let updatedtag = [...this.state.tag, item];
             this.setState({
                 tag:updatedtag
-            })
+            });
+            // this.setState({title
+            //     crops_list: crops_list,
+            //     topics_list:topics_list
+            // })
             // taggin with id
-            topics_list.find((value)=>{
+            this.state.topics_list.find((value)=>{
                 if(value.title === item){
                     this.tags_with_id.push({id:value.id, value:value.title, type:'topic'});
                 }
             });
-            crops_list.find((value)=>{
+            this.state.crops_list.find((value)=>{
                 if(value.title === item){
                     this.tags_with_id.push({id:value.id, value:value.title, type:'crop'});
                 }
@@ -183,9 +250,43 @@ class QuestionComponent extends React.Component {
             alert("No tag selected yet! Please select tag by clicking on + button and then click on submit")
         }
     }
-
+    suggestedAnswers = (answers) => {
+        console.log(answers)
+        //let updatedanswers = [...this.state.suggested_answers, answers];
+        //console.log()
+        this.setState({
+            suggested_answers:answers
+        })
+    }
+    answerSuggestion = (content, image) => {
+        // console.log(content);
+        // console.log(image);
+        this.setState({updated_answer:content});
+        this.setState({updated_image: image});
+    }
+    componentDidUpdate(oldProps) {
+        const cur_question = this.props.current_question
+        let updatedtag = [];
+        if(oldProps.current_question !== cur_question) {
+            cur_question.crops.map(d=>{
+                updatedtag.push({id:d.id, title:d.title, type:'crop'});
+                this.tags_with_id.push({id:d.id, value:d.title, type:'crop'});
+                //this.setState({tag:[...this.state.tag, d.title]})
+               // this.state.tag.push(d.title)
+            })
+            cur_question.topics.map(d=>{
+                //updatedtag = [...this.state.tag, d.title];
+                updatedtag.push({id:d.id, title:d.title, type:'topic'});
+                this.tags_with_id.push({id:d.id, value:d.title, type:'topic'});
+                //this.setState({tag:[...this.state.tag, d.title]})
+                //this.state.tag.push(d.title)
+            })  
+            this.setState({tag: updatedtag})
+        }
+    }
     render(){
-        console.log(this.props.answer_by);
+        //console.log(this.props.current_question_image.original)
+        console.log(this.state.tag)
         return (
             <React.Fragment>
                 <Card>
@@ -212,7 +313,7 @@ class QuestionComponent extends React.Component {
                                 </Grid>
                                 <Grid item sm={1}>
                                    {/* <AddTag crops_list = {this.state.crops} topics_list = {this.state.topics}/>  */}
-                                    <AddTag data = {this.props.data} getTag={this.getTag}/>
+                                    <AddTag data = {this.props.data} getTag={this.getTag} crops_list={this.state.crops_list} topics_list={this.state.topics_list}/>
                                 </Grid>
                             </Grid>
                         </CardTitle>
@@ -228,11 +329,13 @@ class QuestionComponent extends React.Component {
                             <FormGroup>
                                 <Grid container spacing={3}>
                                     <Grid item sm={9}>
-                                        <Input type="textarea" name="answer" value={this.props.updated_answer} onChange={this.handleChange} required placeholder="Enter your answer" />
+                                        {/* <Input type="textarea" name="answer" value={this.props.updated_answer} onChange={this.handleChange} required placeholder="Enter your answer" /> */}
+                                        {this.state.updated_answer !== '' ? <input type="textarea" name="answer" className="form-control" rows="20" defaultValue={this.state.updated_answer} onChange={this.handleChange} required placeholder="Enter your answer" /> : <input type="textarea" name="answer" className="form-control" rows="20"  onChange={this.handleChange} required placeholder="Enter your answer" />}
                                     </Grid>
                                     <Grid item sm={3}>
-                                        {/* <input type="file"  name="image" onChange={this.handleFile} /> */}
-                                        <Input type="file" name="image" id="img" value= {this.props.updated_image} onChange={this.handleFile}/>
+                                        <input type="file"  name="image" onChange={this.handleFile} />
+                                        {/* {this.state.updated_image !== '' ? <Input type="file" name="image" id="img"  onChange={this.handleFile}/> : <Input type="file" name="image" id="img"  onChange={this.handleFile}/>} */}
+                                        
                                         {/* <Label for="img" style={{cursor: 'pointer', color:'blue', fontWeight:'bold'}}>{this.state.imagelabel}</Label><br/>
                                         <Label style={{cursor: 'pointer', color:'blue', fontWeight:'bold'}}>{this.state.image}</Label> */}
                                         {/* <Button color="primary">select image</Button> */}
@@ -245,6 +348,7 @@ class QuestionComponent extends React.Component {
                         </Form>
                     </CardFooter>
                 </Card>
+                <Suggestion data = {this.props.data} crops_list = {this.state.crops_list} topics_list = {this.state.topics_list} tag_list={this.state.tag} deleteTag={this.deleteTag} suggestedAnswers = {this.suggestedAnswers}  answers= {this.state.suggested_answers} answerSuggestion={this.answerSuggestion}/>
             </React.Fragment>
         );
     }

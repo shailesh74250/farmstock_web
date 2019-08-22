@@ -17,7 +17,7 @@ import { updateCurrentQuestion } from '../store/actions/postActions';
 
 // component
 import Question from './question';
-import Suggestion from './suggestion';
+// import Suggestion from './suggestion';
 import CollapseComponent from './collapse';
 import { declareExportAllDeclaration } from '@babel/types';
 
@@ -25,13 +25,9 @@ class ListComponent extends React.Component {
     constructor(props) {
         super(props)
         // this.showQuestion = this.showQuestion.bind(this);
-        
         this.state = {
             curquestion:{},
             selectedIndex : 1,
-            suggested_answers:null,
-            updated_answer:'',
-            updated_image:''
         }
         this.handleClick = this.handleClick.bind(this);
     }
@@ -55,20 +51,20 @@ class ListComponent extends React.Component {
         console.log("inside newlist")
         console.log(d);
     }
-    suggestedAnswers = (answers) => {
-        console.log(answers)
-        //let updatedanswers = [...this.state.suggested_answers, answers];
-        //console.log()
-        this.setState({
-            suggested_answers:answers
-        })
-    }
-    answerSuggestion = (content, image) => {
-        //alert(content);
-        this.setState(
-            {updated_answer:content, updated_image:image}
-        )
-    }
+    // suggestedAnswers = (answers) => {
+    //     console.log(answers)
+    //     //let updatedanswers = [...this.state.suggested_answers, answers];
+    //     //console.log()
+    //     this.setState({
+    //         suggested_answers:answers
+    //     })
+    // }
+    // answerSuggestion = (content, image) => {
+    //     //alert(content);
+    //     this.setState(
+    //         {updated_answer:content, updated_image:image}
+    //     )
+    // }
     render(){
         const classes = this.props.classes;
         return (
@@ -86,15 +82,13 @@ class ListComponent extends React.Component {
                                 </Typography>
                                 <Question 
                                     current_question = {this.state.curquestion} 
-                                    data = {this.props.storedata}
-                                    suggestedAnswers = {this.suggestedAnswers} 
-                                    updated_answer = {this.state.updated_answer}
-                                    updated_image = {this.state.updated_image}
+                                    current_question_image = {this.state.curquestion.image}
+                                    data = {this.props.storedata} 
                                 />
                             </Paper>
-                            <Paper className={classes.paper}>
+                            {/* <Paper className={classes.paper}>
                                 <Suggestion data = {this.props.storedata} suggestedAnswers = {this.suggestedAnswers}  answers= {this.state.suggested_answers} answerSuggestion={this.answerSuggestion}/>
-                            </Paper>
+                            </Paper> */}
                         </Grid>
                         <Grid item sm={4}>
                             <Paper className={classes.paper}>
@@ -125,7 +119,7 @@ class ListComponent extends React.Component {
 const styles = theme => ({
     root: {
         flexGrow:1,
-        // overflowX: 'hidden',
+        overflowX: 'hidden',
         // width: '100%',
         // maxWidth: 360,
         // backgroundColor: theme.palette.background.paper,

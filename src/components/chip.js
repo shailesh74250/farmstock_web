@@ -18,9 +18,9 @@ class ChipComponent extends React.Component {
             this.props.tags.map(record=>{
                 return(
                     <Chip
-                        key={record}
-                        label={record}
-                        name={record}
+                        key={record.id}
+                        label={record.title}
+                        name={record.title}
                         onDelete={this.handleDelete(record)}
                         className={classes.chip}
                         color="primary"
