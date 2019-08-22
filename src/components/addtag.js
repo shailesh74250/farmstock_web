@@ -58,7 +58,16 @@ class AddTagComponent extends React.Component {
         })
     }
     handleOk(){
-        this.props.getTag(this.state.selected_tag);
+        this.props.topics_list.find((value)=>{
+            if(value.title === this.state.selected_tag){
+                this.props.getTag({id:value.id, title:value.title, type:'topic'});
+            }
+        });
+        this.props.crops_list.find((value)=>{
+            if(value.title === this.state.selected_tag){
+                this.props.getTag({id:value.id, title:value.title, type:'crop'});
+            }
+        });
         this.setState({ ...this.state, open: false });
     }
     componentDidMount(){

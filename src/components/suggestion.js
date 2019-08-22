@@ -165,9 +165,8 @@ class CollapseComponent extends React.Component {
                     </CardHeader>
                     <CardBody>
                         <CardTitle>
-                        <Grid container spacing={3}>
+                        {/* <Grid container spacing={3}>
                             <Grid item sm={8} style={{textAlign:'left'}}>
-                                {/* {this.props.tag_list !== undefined ?<ChipComponent tags={this.props.tag_list} deleteTag={this.deleteTag}/> : <ChipComponent tags={this.state.tag} deleteTag={this.deleteTag}/>}        */}
                                 <ChipComponent tags={this.state.tag} deleteTag={this.deleteTag}/>
                             </Grid>
                             <Grid item sm={3}>
@@ -176,10 +175,9 @@ class CollapseComponent extends React.Component {
                                 </Button>
                             </Grid>
                             <Grid item sm={1}>
-                                {/* <AddTag crops_list = {this.state.crops} topics_list = {this.state.topics}/>  */}
                                 <AddTag data = {this.props.data} getTag={this.getTag}/>
                             </Grid>
-                        </Grid>
+                        </Grid> */}
                         </CardTitle>
                         <CardText>
                             {this.props.answers.length === 0 ? 'no suggested question found!':

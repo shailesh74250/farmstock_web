@@ -139,15 +139,15 @@ class QuestionComponent extends React.Component {
             this.setState({updated_image:''});
         }
     }
-    async getSuggestedAnswers(data){
+    async getSuggestedAnswers(){
         // https://dev.farmstock.in/api/v1/tags?crops={id1}&crops={id2}....crops={idn}&topics={id1} &topics={id2}.
         var crop_topic_url = '';
-        console.log(data);
-        data.find((value)=>{
-            if(value.type === 'crop'){
-                crop_topic_url += 'crops='+value.id+'&';
-            }else if(value.type ==='topic'){
-                crop_topic_url += 'topics='+value.id+'&';
+        //console.log(data);
+        this.state.tag.find((obj)=>{
+            if(obj.type === 'crop'){
+                crop_topic_url += 'crops='+obj.id+'&';
+            }else if(obj.type ==='topic'){
+                crop_topic_url += 'topics='+obj.id+'&';
             }
         });
         console.log(crop_topic_url);
@@ -178,77 +178,51 @@ class QuestionComponent extends React.Component {
         } 
     }
     async postSuggestedAnswers(crop_topic_url){
-        console.log(this.props.current_question.id);
-        try {
-            const response =  axios.post('http://127.0.0.1:8000/api/v1/posts/'+this.props.current_question.id+'/tag/update?'+crop_topic_url,
+        console.log(crop_topic_url);
+        
+        axios.get('http://127.0.0.1:8000/api/v1/posts/'+this.props.current_question.id+'/tag/update?'+crop_topic_url,
             {
                 headers: {
-                  Authorization: 'Token ec5e8a7ac4555bacd704a8f9a5c66784eac11060','content-type': 'application/json'
+                    Authorization: 'Token ec5e8a7ac4555bacd704a8f9a5c66784eac11060','content-type': 'application/json'
                 }
-            });
-            console.log('👉 Returned data:', response);
-            alert("tag added successfully");
-           // this.setState({message:'Answer posted successfully!'});
-           // this.setState({color:'green'});
-        } catch (e) {
-            console.log(`😱 Axios request failed: ${e}`);
-            alert("tag not added");
-            // this.setState({message:'Answer posted failed'});
-            // this.setState({color:'red'});
-        }
+            }
+        ).then(response => {
+            if(response.status === 200)
+                alert("Tag updated successfully!") 
+        })
+        .catch(err => console.warn(err));
+           
     }
+    // get selected tag from addtag.js 
     getTag = (item) => {
-        
-        // check wheather selected tag already present in list if yes then it goes to elese block
-        if(!this.state.tag.includes(item)){
-            let updatedtag = [...this.state.tag, item];
-            this.setState({
-                tag:updatedtag
-            });
-            // this.setState({title
-            //     crops_list: crops_list,
-            //     topics_list:topics_list
-            // })
-            // taggin with id
-            this.state.topics_list.find((value)=>{
-                if(value.title === item){
-                    this.tags_with_id.push({id:value.id, value:value.title, type:'topic'});
-                }
-            });
-            this.state.crops_list.find((value)=>{
-                if(value.title === item){
-                    this.tags_with_id.push({id:value.id, value:value.title, type:'crop'});
-                }
-            });
-        }else{
-            alert('Already selected!')
-        }
-        // tags_with_id is global variable
-        console.log(this.tags_with_id);
-        //this.getSuggestedAnswers(this.tags_with_id);
-    }
-    deleteTag = (item) => {
         console.log(item);
-        let filtertag = this.state.tag.filter(data => {
-            return data !== item
+        this.state.tag.find((obj)=>{
+            if(obj.id === item.id){
+                alert('This tag already selected!');
+            }else {
+                let updatedtag = [...this.state.tag, item];
+                this.setState({
+                    tag:updatedtag
+                });
+            }
+        });
+    }
+    // get deleted tag from chip.js
+    deleteTag = (item) => {
+        let filtertag = this.state.tag.filter(obj => {
+            return obj.id !== item.id
         })
         this.setState({
             tag:filtertag
         })
-        let filtertags_with_id = this.tags_with_id.filter(data => {
-            return data.value !== item
-        })
-        this.tags_with_id = filtertags_with_id;
-        //console.log(this.tags_with_id)
-        if(this.tags_with_id.length === 0)
-            this.getSuggestedAnswers(filtertags_with_id);
     }
     handleSubmit = () => {
-        if(this.tags_with_id.length > 0){
-            this.getSuggestedAnswers(this.tags_with_id);
-        }else{
-            alert("No tag selected yet! Please select tag by clicking on + button and then click on submit")
-        }
+        this.getSuggestedAnswers();
+        // if(this.state.tag.length > 0){
+        //     this.getSuggestedAnswers(this.state.tag);
+        // }else{
+        //     alert("No tag selected yet! Please select tag by clicking on + button and then click on submit")
+        // }
     }
     suggestedAnswers = (answers) => {
         console.log(answers)

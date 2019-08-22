@@ -3,11 +3,11 @@ import { withStyles } from '@material-ui/core/styles';
 import Chip from '@material-ui/core/Chip';
 
 class ChipComponent extends React.Component {
-    constructor(props) {
-        super(props)
-    }
-    componentDidMount(){
-    }
+    // constructor(props) {
+    //     super(props)
+    // }
+    // componentDidMount(){
+    // }
     handleDelete = chipToDelete => () => {
         this.props.deleteTag(chipToDelete);
     };
