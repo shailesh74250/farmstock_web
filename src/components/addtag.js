@@ -29,11 +29,7 @@ class AddTagComponent extends React.Component {
             select_type:["Topics", "Crops"],
             selected_type: "",
             selected_tag: "",
-            // topics_list : [],
-            // crops_list :[]
             tags_list:[],
-            // crops_list:[],
-            // topics_list:[]
         } 
     }
     handleOpen(e) {
@@ -44,15 +40,11 @@ class AddTagComponent extends React.Component {
         this.setState({ ...this.state, open: false });
     }
     handleChange(e) {
-        //alert(e.target.value);
         if(e.target.value === 'Topics'){
-            //this.getTopics();
             this.setState({tags_list:this.props.topics_list})
         }else if(e.target.value === 'Crops'){
-            //this.getCrops();
             this.setState({tags_list:this.props.crops_list})
         }
-        //console.log(e.currenttarget.key)
         this.setState({
             [e.target.name] : e.target.value
         })
@@ -75,7 +67,7 @@ class AddTagComponent extends React.Component {
     }
     render(){
         const classes = this.props.classes;
-        const tagsList = this.state.tags_list.length ? (
+        const tagsList = this.state.tags_list.length > 0 ? (
             this.state.tags_list.map(tag => {
                 return (
                     <MenuItem key={tag.id} value={tag.title}>{tag.title}</MenuItem>

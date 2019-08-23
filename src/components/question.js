@@ -104,7 +104,6 @@ class QuestionComponent extends React.Component {
 
         let formData = new FormData()  
         if(this.state.updated_answer !== '' && this.state.updated_image !== '' && this.state.image === ''){
-            alert('editable');
             var filename = this.state.updated_image.replace(/^.*[\\\/]/, '');
             let file = await fetch(this.state.updated_image)
             .then(r => r.blob())
@@ -130,6 +129,7 @@ class QuestionComponent extends React.Component {
             this.setState({image:''});
             this.setState({updated_answer:''});
             this.setState({updated_image:''});
+            setTimeout(function(){window.location.reload()},2000);
         } catch (e) {
             console.log(`😱 Axios request failed: ${e}`);
             this.setState({message:'Answer posted failed'});
@@ -143,21 +143,30 @@ class QuestionComponent extends React.Component {
         // https://dev.farmstock.in/api/v1/tags?crops={id1}&crops={id2}....crops={idn}&topics={id1} &topics={id2}.
         var crop_topic_url = '';
         //console.log(data);
-        this.state.tag.find((obj)=>{
-            if(obj.type === 'crop'){
-                crop_topic_url += 'crops='+obj.id+'&';
-            }else if(obj.type ==='topic'){
-                crop_topic_url += 'topics='+obj.id+'&';
-            }
-        });
+        // if(this.state.tag.length > 0){
+            this.state.tag.find((obj)=>{
+                if(obj.type === 'crop'){
+                    crop_topic_url += 'crops='+obj.id+'&';
+                }else if(obj.type ==='topic'){
+                    crop_topic_url += 'topics='+obj.id+'&';
+                }
+            });
+        // }else{
+        //     tags.find((obj)=>{
+        //         if(obj.type === 'crop'){
+        //             crop_topic_url += 'crops='+obj.id+'&';
+        //         }else if(obj.type ==='topic'){
+        //             crop_topic_url += 'topics='+obj.id+'&';
+        //         }
+        //     });
+        // }
+        
         console.log(crop_topic_url);
-        if(crop_topic_url !== ''){
+        this.crop_topic_url = crop_topic_url;
+        // if(crop_topic_url !== ''){
             await axios.get('http://127.0.0.1:8000/api/v1/posts/tag?'+crop_topic_url)
             .then(response => {
-                //console.log(response.data.results);
-                this.postSuggestedAnswers(crop_topic_url);
-                crop_topic_url = '';
-                //this.props.suggestedAnswers(response.data.results);
+                this.postSuggestedAnswers();
                 this.suggestedAnswers(response.data.results);
             })
             .catch((error) => {
@@ -172,15 +181,15 @@ class QuestionComponent extends React.Component {
                 }
                 console.log(error.config);
             });
-        }else{
-            crop_topic_url = '';
-            this.suggestedAnswers('');
-        } 
+        // }else{
+        //     crop_topic_url = '';
+        //     this.suggestedAnswers('');
+        // } 
     }
-    async postSuggestedAnswers(crop_topic_url){
-        console.log(crop_topic_url);
-        
-        axios.get('http://127.0.0.1:8000/api/v1/posts/'+this.props.current_question.id+'/tag/update?'+crop_topic_url,
+    // post tag or update tag
+    async postSuggestedAnswers(){
+        console.log(this.crop_topic_url);
+        axios.get('http://127.0.0.1:8000/api/v1/posts/'+this.props.current_question.id+'/tag/update?'+this.crop_topic_url,
             {
                 headers: {
                     Authorization: 'Token ec5e8a7ac4555bacd704a8f9a5c66784eac11060','content-type': 'application/json'
@@ -188,24 +197,34 @@ class QuestionComponent extends React.Component {
             }
         ).then(response => {
             if(response.status === 200)
-                alert("Tag updated successfully!") 
+               // alert("Tag updated successfully!") 
+                window.location.reload();
+                this.crop_topic_url = ''
         })
-        .catch(err => console.warn(err));
-           
+        .catch(err => console.warn(err));  
     }
     // get selected tag from addtag.js 
     getTag = (item) => {
-        console.log(item);
-        this.state.tag.find((obj)=>{
-            if(obj.id === item.id){
-                alert('This tag already selected!');
-            }else {
-                let updatedtag = [...this.state.tag, item];
-                this.setState({
-                    tag:updatedtag
-                });
-            }
-        });
+        //alert(item);
+        console.log(item)
+        if(this.state.tag.length > 0){
+            this.state.tag.find((obj)=>{
+                if(obj.id === item.id){
+                    alert('This tag already selected!');
+                }else {
+                    let updatedtag = [...this.state.tag, item];
+                    this.setState({
+                        tag:updatedtag
+                    });
+                }
+            });
+        }else{
+            let updatedtag = [...this.state.tag, item];
+            this.setState({
+                tag:updatedtag
+            });
+        }
+        
     }
     // get deleted tag from chip.js
     deleteTag = (item) => {
@@ -218,23 +237,16 @@ class QuestionComponent extends React.Component {
     }
     handleSubmit = () => {
         this.getSuggestedAnswers();
-        // if(this.state.tag.length > 0){
-        //     this.getSuggestedAnswers(this.state.tag);
-        // }else{
-        //     alert("No tag selected yet! Please select tag by clicking on + button and then click on submit")
-        // }
+        this.postSuggestedAnswers();
+
     }
+    // get suggested answer 
     suggestedAnswers = (answers) => {
-        console.log(answers)
-        //let updatedanswers = [...this.state.suggested_answers, answers];
-        //console.log()
         this.setState({
             suggested_answers:answers
         })
     }
     answerSuggestion = (content, image) => {
-        // console.log(content);
-        // console.log(image);
         this.setState({updated_answer:content});
         this.setState({updated_image: image});
     }
@@ -256,11 +268,13 @@ class QuestionComponent extends React.Component {
                 //this.state.tag.push(d.title)
             })  
             this.setState({tag: updatedtag})
+            //this.getSuggestedAnswers(updatedtag);
         }
     }
     render(){
         //console.log(this.props.current_question_image.original)
         console.log(this.state.tag)
+        // this.getSuggestedAnswers();
         return (
             <React.Fragment>
                 <Card>

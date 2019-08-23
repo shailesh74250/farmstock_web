@@ -28,32 +28,30 @@ class CollapseComponent extends React.Component {
         this.crop_topic_url = '';
     }
     componentDidMount(){
-        // this.setState({data:this.props.data});
+        // this.getSuggestedAnswers();
     }
     toggle() {
         this.setState(state => ({ collapse: !state.collapse }));
     } 
     handleSelect = (content,image) => () => {
-        console.log(content);
-        console.log(image)
         this.props.answerSuggestion(content, image);
     }
-    async getSuggestedAnswers(data){
+    async getSuggestedAnswers(){
         // https://dev.farmstock.in/api/v1/tags?crops={id1}&crops={id2}....crops={idn}&topics={id1} &topics={id2}.
         var crop_topic_url = '';
-        console.log(data);
-        data.find((value)=>{
-            if(value.type === 'crop'){
-                crop_topic_url += 'crops='+value.id+'&';
-            }else if(value.type ==='topic'){
-                crop_topic_url += 'topics='+value.id+'&';
+        //console.log(data);
+        this.state.tag.find((obj)=>{
+            if(obj.type === 'crop'){
+                crop_topic_url += 'crops='+obj.id+'&';
+            }else if(obj.type ==='topic'){
+                crop_topic_url += 'topics='+obj.id+'&';
             }
         });
         console.log(crop_topic_url);
         if(crop_topic_url !== ''){
             await axios.get('http://127.0.0.1:8000/api/v1/posts/tag?'+crop_topic_url)
             .then(response => {
-                //console.log(response.data.results);
+                console.log(response.data.results);
                 crop_topic_url = '';
                 this.props.suggestedAnswers(response.data.results);
             })
@@ -75,86 +73,44 @@ class CollapseComponent extends React.Component {
         } 
     }
     getTag = (item) => {
-        
-        // check wheather selected tag already present in list if yes then it goes to elese block
-        if(!this.state.tag.includes(item)){
-            let updatedtag = [...this.state.tag, item];
-            this.setState({
-                tag:updatedtag
-            })
-            // taggin with id
-            this.props.topics_list.find((value)=>{
-                if(value.title === item){
-                    this.tags_with_id.push({id:value.id, value:value.title, type:'topic'});
-                }
-            });
-            this.props.crops_list.find((value)=>{
-                if(value.title === item){
-                    this.tags_with_id.push({id:value.id, value:value.title, type:'crop'});
-                }
-            });
-        }else{
-            alert('Already selected!')
-        }
-        // tags_with_id is global variable
-        console.log(this.tags_with_id);
-        //this.getSuggestedAnswers(this.tags_with_id);
+        this.state.tag.find((obj)=>{
+            if(obj.id === item.id){
+                alert('This tag already selected!');
+            }else {
+                let updatedtag = [...this.state.tag, item];
+                this.setState({
+                    tag:updatedtag
+                });
+            }
+        });
     }
     deleteTag = (item) => {
         console.log(item);
-        let filtertag = this.state.tag.filter(data => {
-            return data !== item
+        let filtertag = this.state.tag.filter(obj => {
+            return obj.id !== item.id
         })
         this.setState({
             tag:filtertag
         })
-        let filtertags_with_id = this.tags_with_id.filter(data => {
-            return data.value !== item
-        })
-        this.tags_with_id = filtertags_with_id;
-        //console.log(this.tags_with_id)
-        if(this.tags_with_id.length === 0)
-            this.getSuggestedAnswers(filtertags_with_id);
     }
     handleSubmit = () => {
-        if(this.tags_with_id.length > 0){
-            this.getSuggestedAnswers(this.tags_with_id);
+        if(this.state.tag.length > 0){
+            this.getSuggestedAnswers();
         }else{
             alert("No tag selected yet! Please select tag by clicking on + button and then click on submit")
         }
     }
     componentDidUpdate(oldProps) {
         const newProps = this.props.tag_list
-        
         if(oldProps.tag_list !== newProps) {
-            console.log(newProps);
             this.setState({tag:newProps});
-            // newProps.filter(data => {
-            //     if(!this.state.tag.includes(data)){
-            //         let updatedtag = [...this.state.tag, data];
-            //         this.setState({
-            //             tag:updatedtag
-            //         });
-            //         // taggin with id
-            //         this.props.topics_list.find((value)=>{
-            //             if(value.title === data){
-            //                 this.tags_with_id.push({id:value.id, value:value.title, type:'topic'});
-            //             }
-            //         });
-            //         this.props.crops_list.find((value)=>{
-            //             if(value.title === data){
-            //                 this.tags_with_id.push({id:value.id, value:value.title, type:'crop'});
-            //             }
-            //         });
-            //     }else{
-            //         alert('Already selected!')
-            //     }
-            // })
         }
+        //this.getSuggestedAnswers();
     }
     render(){
         const classes = this.props.classes;
         console.log(this.state.tag);
+        //this.getSuggestedAnswers();
         return (
             <div className={classes.root}>
                 <Card>
@@ -165,7 +121,7 @@ class CollapseComponent extends React.Component {
                     </CardHeader>
                     <CardBody>
                         <CardTitle>
-                        {/* <Grid container spacing={3}>
+                        <Grid container spacing={3}>
                             <Grid item sm={8} style={{textAlign:'left'}}>
                                 <ChipComponent tags={this.state.tag} deleteTag={this.deleteTag}/>
                             </Grid>
@@ -175,9 +131,9 @@ class CollapseComponent extends React.Component {
                                 </Button>
                             </Grid>
                             <Grid item sm={1}>
-                                <AddTag data = {this.props.data} getTag={this.getTag}/>
+                                <AddTag data = {this.props.data} getTag={this.getTag} crops_list = {this.props.crops_list} topics_list = {this.props.topics_list}/>
                             </Grid>
-                        </Grid> */}
+                        </Grid>
                         </CardTitle>
                         <CardText>
                             {this.props.answers.length === 0 ? 'no suggested question found!':
