@@ -77,9 +77,6 @@ class ListComponent extends React.Component {
                     <Grid container spacing={3}>
                         <Grid item sm={8}>
                             <Paper className={classes.paper}>
-                                <Typography variant="h5" component="h1" gutterBottom>
-                                    Question Answer Module
-                                </Typography>
                                 <Question 
                                     current_question = {this.state.curquestion} 
                                     current_question_image = {this.state.curquestion.image}

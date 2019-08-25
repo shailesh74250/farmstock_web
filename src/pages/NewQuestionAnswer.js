@@ -5,6 +5,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 
 // import Component
 import ListComponent from '../components/newlist';
+import Test from '../components/test';
 
 // import store
 import { connect } from 'react-redux';
@@ -66,7 +67,7 @@ class QuestionAnswer extends React.Component {
         return (
             // this.state.loading ? <CircularProgress className={classes.progress} /> :
                 this.state.loading ? <CircularProgress style={{marginTop:'250px'}}/> :
-                <ListComponent/>
+                <Test />
         );
     }
 }

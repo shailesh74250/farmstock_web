@@ -38,6 +38,8 @@ class QuestionComponent extends React.Component {
             suggested_answers:[],
             crops_list:[],
             topics_list:[],
+            qimage:'',
+            image_selected:''
         }
         this.tags_with_id = [];
         this.crop_topic_url = '';
@@ -129,6 +131,7 @@ class QuestionComponent extends React.Component {
             this.setState({image:''});
             this.setState({updated_answer:''});
             this.setState({updated_image:''});
+            this.setState({image_selected:''});
             setTimeout(function(){window.location.reload()},2000);
         } catch (e) {
             console.log(`😱 Axios request failed: ${e}`);
@@ -198,7 +201,7 @@ class QuestionComponent extends React.Component {
         ).then(response => {
             if(response.status === 200)
                // alert("Tag updated successfully!") 
-                window.location.reload();
+                //window.location.reload();
                 this.crop_topic_url = ''
         })
         .catch(err => console.warn(err));  
@@ -249,6 +252,8 @@ class QuestionComponent extends React.Component {
     answerSuggestion = (content, image) => {
         this.setState({updated_answer:content});
         this.setState({updated_image: image});
+        // if(image !== '')
+            this.setState({image_selected:'Image selected'});
     }
     componentDidUpdate(oldProps) {
         const cur_question = this.props.current_question
@@ -266,14 +271,21 @@ class QuestionComponent extends React.Component {
                 this.tags_with_id.push({id:d.id, value:d.title, type:'topic'});
                 //this.setState({tag:[...this.state.tag, d.title]})
                 //this.state.tag.push(d.title)
-            })  
+            })    
             this.setState({tag: updatedtag})
+            if(cur_question.image !== null){
+                console.log(cur_question.image.original);
+                this.setState({qimage:cur_question.image.original});
+            }else{
+                this.setState({qimage:''});
+            }
+                
             //this.getSuggestedAnswers(updatedtag);
         }
     }
     render(){
         //console.log(this.props.current_question_image.original)
-        console.log(this.state.tag)
+        //console.log(this.props.current_question.image.original)
         // this.getSuggestedAnswers();
         return (
             <React.Fragment>
@@ -284,7 +296,7 @@ class QuestionComponent extends React.Component {
                                 {this.props.current_question.content}
                             </Grid>
                             <Grid item sm={6}>
-                                <CardImg top width="100%" height="200" src={this.props.current_question.image} alt="Card image cap" />
+                                <CardImg top width="100" height="150" src={this.state.qimage} alt="This question doesn't have image" />
                             </Grid>
                         </Grid>
                     </CardHeader>
@@ -317,16 +329,11 @@ class QuestionComponent extends React.Component {
                             <FormGroup>
                                 <Grid container spacing={3}>
                                     <Grid item sm={9}>
-                                        {/* <Input type="textarea" name="answer" value={this.props.updated_answer} onChange={this.handleChange} required placeholder="Enter your answer" /> */}
                                         {this.state.updated_answer !== '' ? <input type="textarea" name="answer" className="form-control" rows="20" defaultValue={this.state.updated_answer} onChange={this.handleChange} required placeholder="Enter your answer" /> : <input type="textarea" name="answer" className="form-control" rows="20"  onChange={this.handleChange} required placeholder="Enter your answer" />}
                                     </Grid>
                                     <Grid item sm={3}>
                                         <input type="file"  name="image" onChange={this.handleFile} />
-                                        {/* {this.state.updated_image !== '' ? <Input type="file" name="image" id="img"  onChange={this.handleFile}/> : <Input type="file" name="image" id="img"  onChange={this.handleFile}/>} */}
-                                        
-                                        {/* <Label for="img" style={{cursor: 'pointer', color:'blue', fontWeight:'bold'}}>{this.state.imagelabel}</Label><br/>
-                                        <Label style={{cursor: 'pointer', color:'blue', fontWeight:'bold'}}>{this.state.image}</Label> */}
-                                        {/* <Button color="primary">select image</Button> */}
+                                        <p style={{color:'green'}}>{this.state.image_selected}</p>
                                     </Grid>
                                 </Grid>
                             </FormGroup>
