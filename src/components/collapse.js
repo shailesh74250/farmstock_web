@@ -8,6 +8,12 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Grid from '@material-ui/core/Grid';
 import { CardImg } from 'reactstrap';
 import Paper from '@material-ui/core/Paper';
+import Card from '@material-ui/core/Card';
+import CardActionArea from '@material-ui/core/CardActionArea';
+import CardActions from '@material-ui/core/CardActions';
+import CardContent from '@material-ui/core/CardContent';
+import CardMedia from '@material-ui/core/CardMedia';
+import Button from '@material-ui/core/Button';
 
 
 // connect to redux store
@@ -37,6 +43,30 @@ class CollapseComponent extends React.Component {
                 <div className={classes.root} >
                 {this.props.answers.map(d => 
                 <div>
+                    {/* <Card className={classes.card}>
+                        <CardActionArea>
+                            <CardMedia
+                            component="img"
+                            alt="Contemplative Reptile"
+                            height="300"
+                            image={d.image}
+                            title="Contemplative Reptile"
+                            />
+                            <CardContent>
+                            <Typography variant="body2" color="textSecondary" component="p">
+                                {d.content}
+                            </Typography>
+                            </CardContent>
+                        </CardActionArea>
+                        <CardActions>
+                            <Button size="small" color="primary">
+                            Share
+                            </Button>
+                            <Button size="small" color="primary">
+                            Learn More
+                            </Button>
+                        </CardActions>
+                    </Card> */}
                     <ExpansionPanel>
                         <ExpansionPanelSummary
                             expandIcon={<ExpandMoreIcon />}
@@ -53,7 +83,7 @@ class CollapseComponent extends React.Component {
                                     </Typography>
                             </Grid>
                                 <Grid item sm={4}>
-                                    <CardImg top width="100%" src={d.image} alt="Card image cap" />
+                                    <CardImg top width="50%" height="300" src={d.image} alt="Card image cap" />
                                 </Grid>
                             </Grid>
                         </ExpansionPanelDetails>
@@ -77,12 +107,15 @@ const styles = theme => ({
     root: {
         width: '100%',
         overflow: 'auto',
-        height: '300px'
+        height: '300px',
     },
     heading: {
         fontSize: theme.typography.pxToRem(15),
         fontWeight: theme.typography.fontWeightRegular,
-    },   
+    }, 
+    card: {
+        maxWidth: 345,
+      },  
 });
 
 const mapStateToProps = (state) => {

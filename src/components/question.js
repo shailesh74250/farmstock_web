@@ -8,6 +8,7 @@ import Grid from '@material-ui/core/Grid';
 import axios from 'axios';
 import { connect } from 'react-redux';
 
+
 // import component
 import AddTag from './addtag';
 import AnswerList from './collapse';
@@ -200,7 +201,7 @@ class QuestionComponent extends React.Component {
             }
         ).then(response => {
             if(response.status === 200)
-               // alert("Tag updated successfully!") 
+                //alert("Tag updated successfully!") 
                 //window.location.reload();
                 this.crop_topic_url = ''
         })
@@ -240,7 +241,7 @@ class QuestionComponent extends React.Component {
     }
     handleSubmit = () => {
         this.getSuggestedAnswers();
-        this.postSuggestedAnswers();
+        //this.postSuggestedAnswers();
 
     }
     // get suggested answer 
@@ -295,8 +296,8 @@ class QuestionComponent extends React.Component {
                             <Grid item sm={6}>
                                 {this.props.current_question.content}
                             </Grid>
-                            <Grid item sm={6}>
-                                <CardImg top width="100" height="150" src={this.state.qimage} alt="This question doesn't have image" />
+                            <Grid item sm={6} style={{backgroundColor:'white'}}>
+                                <CardImg top style={{width:"60%", height:"200px"}} src={this.state.qimage} alt="This question doesn't have image" />
                             </Grid>
                         </Grid>
                     </CardHeader>

@@ -156,7 +156,7 @@ class CollapseComponent extends React.Component {
                                             >
                                                 <Typography className={classes.heading}>{d.content}</Typography>
                                             </ExpansionPanelSummary>
-                                            <ExpansionPanelDetails>
+                                            <ExpansionPanelDetails style={{width:'100%'}}>
                                                 <Grid container>
                                                     <Grid item sm={5}>
                                                         <Typography>
@@ -164,7 +164,7 @@ class CollapseComponent extends React.Component {
                                                         </Typography>
                                                     </Grid>
                                                     <Grid item sm={4}>
-                                                        <CardImg top src={d.image} alt="Card image cap" />
+                                                        <CardImg top src={d.image} width="50%" height="300" alt="Image not found" />
                                                     </Grid>
                                                     <Grid item sm={3}>
                                                         <Button variant="contained" color="primary" onClick={this.handleSelect(d.content, d.image)}>select</Button>
